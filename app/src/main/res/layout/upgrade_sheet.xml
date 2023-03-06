@@ -21,12 +21,19 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/label"
+        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:height="400dp"
         android:gravity="center_horizontal"
         android:text="Upgrades"
         android:textColor="@color/white"
         android:textSize="48sp"
         app:fontFamily="@font/aldrich" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginBottom="40dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/recyclerUpgrades"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
