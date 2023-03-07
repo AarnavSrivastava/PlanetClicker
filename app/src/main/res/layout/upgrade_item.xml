@@ -42,21 +42,34 @@
                 android:id="@+id/upgradeAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="5dp"
                 android:fontFamily="@font/alegreya_sans_sc_bold"
                 android:gravity="center"
                 android:text="Price"
                 android:textColor="@color/white"
-                android:textSize="18sp" />
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/upgradeOwned"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/alegreya_sans_sc_bold"
+                android:gravity="center"
+                android:text="Owned: "
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
             <Button
+                android:backgroundTint="#2E0F3C"
                 android:id="@+id/upgradeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="125dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
-                android:fontFamily="@font/aldrich"
-                android:text="UPGRADE" />
+                android:enabled="true"
+                android:text="Upgrade"
+                android:textSize="14sp" />
 
         </LinearLayout>
     </LinearLayout>
