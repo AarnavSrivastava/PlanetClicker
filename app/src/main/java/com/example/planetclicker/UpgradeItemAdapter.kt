@@ -63,7 +63,7 @@ class UpgradeItemAdapter(private val dataSet: ArrayList<UpgradeItem>, mContext: 
         viewHolder.owned.text = "Owned: ${dataSet[position].count}"
         viewHolder.image.setImageResource(dataSet[position].image)
 
-        viewHolder.button.text = if (dataSet[position].count == 0) "Purchase" else "Upgrade"
+        viewHolder.button.text = if (dataSet[position].count.get() == 0) "Purchase" else "Upgrade"
 
         val customFont = ResourcesCompat.getFont(context, R.font.alegreya_sans_sc_bold)
 

@@ -114,8 +114,8 @@ class MainActivity : AppCompatActivity() {
                                 .setDuration(600)
                                 .alpha(0f)
                                 .rotation(Random.nextInt(-90, 90)+0f)
-                                .translationY(300f)
-                                .translationX(Random.nextInt(-300,300)+0f)
+                                .translationY(400f)
+                                .translationX(Random.nextInt(-400,400)+0f)
                                 .setListener(object : Animator.AnimatorListener {
                                     override fun onAnimationStart(animation: Animator) {}
                                     override fun onAnimationEnd(animation: Animator) {
@@ -158,13 +158,13 @@ class MainActivity : AppCompatActivity() {
 
         GlobalScope.launch {
             while (true) {
-                sleep(1000)
+                sleep(100)
 
                 Log.d("COUNT", "${metal.get()}")
 
                 for (item in items) {
-                    if (item.count != 0) {
-                        metal.set(metal.get() + item.income.get() * multiplier.get()/item.cooldown.get())
+                    if (item.count.get() != 0) {
+                        metal.set(metal.get() + item.income.get() * multiplier.get()/(item.cooldown.get()*10))
                         disp.text = "Metal: ${floor(metal.get()).toInt()}"
                     }
                 }

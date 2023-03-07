@@ -14,11 +14,11 @@ class UpgradeItem(name: String, image: Int, cost: AtomicInteger, cooldown: Atomi
 
     val cooldown: AtomicInteger = cooldown
 
-    var count: Int = 0
+    var count: AtomicInteger = AtomicInteger(0)
 
     fun buyItem() {
-        count++
+        count.incrementAndGet()
         this.cost.set(floor(startCost * 1.15.pow(count.toDouble()) + 0.5).toInt())
-        income.set(floor(count * 1.5 - 0.5).toInt())
+        income.set(floor(count.get() * 1.5 - 0.5).toInt())
     }
 }
