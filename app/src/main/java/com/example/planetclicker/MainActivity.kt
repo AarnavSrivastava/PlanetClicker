@@ -2,6 +2,7 @@ package com.example.planetclicker
 
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.opengl.Visibility
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         @JvmStatic lateinit var disp: MaterialTextView
         @JvmStatic lateinit var mpsView: TextView
         @JvmStatic var mps: AtomicReference<Double> = AtomicReference<Double>(0.0)
+        @JvmStatic lateinit var context: Context
     }
     var currentPerClick: AtomicInteger = AtomicInteger(1)
     var multiplier: AtomicReference<Double> = AtomicReference<Double>(1.0)
@@ -61,6 +63,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+
+        context = applicationContext
 
         disp = findViewById(R.id.label)
         button = findViewById(R.id.button)

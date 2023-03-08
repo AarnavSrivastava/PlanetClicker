@@ -1,16 +1,24 @@
 package com.example.planetclicker
 
+import android.animation.Animator
 import android.content.Context
 import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.BounceInterpolator
+import android.view.animation.CycleInterpolator
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.android.ReverseInterpolator
 import kotlin.math.floor
+import kotlin.random.Random
 
 
 class UpgradeItemAdapter(private val dataSet: ArrayList<UpgradeItem>, mContext: Context) :
@@ -32,6 +40,7 @@ class UpgradeItemAdapter(private val dataSet: ArrayList<UpgradeItem>, mContext: 
         val owned: TextView
         val button: Button
         val image: ImageView
+        val constLayout: ConstraintLayout
 
         init {
             // Define click listener for the ViewHolder's View
@@ -40,6 +49,7 @@ class UpgradeItemAdapter(private val dataSet: ArrayList<UpgradeItem>, mContext: 
             owned = view.findViewById(R.id.upgradeOwned)
             button = view.findViewById(R.id.upgradeButton)
             image = view.findViewById(R.id.imageView)
+            constLayout = view.findViewById(R.id.constLayout2)
         }
     }
 
@@ -94,9 +104,55 @@ class UpgradeItemAdapter(private val dataSet: ArrayList<UpgradeItem>, mContext: 
         }
 
         viewHolder.button.isEnabled = dataSet[position].enabled.get()
+
+        if (viewHolder.button.isEnabled) {
+            animate(viewHolder.button)
+        }
+
+        for (i in 1..dataSet[position].count.get()) {
+            var image = ImageView(MainActivity.context)
+            image.id = ConstraintLayout.generateViewId()
+            image.setImageResource(dataSet[position].image)
+            image.alpha = 0f
+
+            val lp = ConstraintLayout.LayoutParams(200, 200)
+            image.layoutParams = lp
+
+            viewHolder.constLayout.addView(image)
+
+            val set = ConstraintSet()
+            set.clone(viewHolder.constLayout)
+
+            set.connect(image.id, ConstraintSet.TOP, viewHolder.constLayout.id, ConstraintSet.TOP, 30)
+            set.connect(image.id, ConstraintSet.LEFT, viewHolder.constLayout.id, ConstraintSet.LEFT, 8000)
+
+            image.animate()
+                .setDuration(300)
+                .alpha(1f)
+                .setListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator) {}
+                    override fun onAnimationEnd(animation: Animator) {}
+                    override fun onAnimationCancel(animation: Animator) {}
+                    override fun onAnimationRepeat(animation: Animator) {}
+                }).start()
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
-
+    fun animate(view: Button) {
+        view.animate()
+            .setDuration(6000000)
+            .scaleX(1.3f)
+            .scaleY(1.3f)
+            .setInterpolator(CycleInterpolator(6000000f/1000))
+            .setListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {}
+                override fun onAnimationEnd(animation: Animator) {
+                    animate(view)
+                }
+                override fun onAnimationCancel(animation: Animator) {}
+                override fun onAnimationRepeat(animation: Animator) {}
+            }).start()
+    }
 }
