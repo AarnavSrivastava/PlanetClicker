@@ -109,7 +109,7 @@ class UpgradeItemAdapter(private val dataSet: ArrayList<UpgradeItem>, mContext: 
             animate(viewHolder.button)
         }
 
-        for (i in 1..dataSet[position].count.get()) {
+        for (i in 0..dataSet[position].count.get()) {
             var image = ImageView(MainActivity.context)
             image.id = ConstraintLayout.generateViewId()
             image.setImageResource(dataSet[position].image)
@@ -124,17 +124,19 @@ class UpgradeItemAdapter(private val dataSet: ArrayList<UpgradeItem>, mContext: 
             set.clone(viewHolder.constLayout)
 
             set.connect(image.id, ConstraintSet.TOP, viewHolder.constLayout.id, ConstraintSet.TOP, 30)
-            set.connect(image.id, ConstraintSet.LEFT, viewHolder.constLayout.id, ConstraintSet.LEFT, 8000)
+            set.connect(image.id, ConstraintSet.LEFT, viewHolder.constLayout.id, ConstraintSet.LEFT, 500 + 500 * i)
 
-            image.animate()
-                .setDuration(300)
-                .alpha(1f)
-                .setListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(animation: Animator) {}
-                    override fun onAnimationEnd(animation: Animator) {}
-                    override fun onAnimationCancel(animation: Animator) {}
-                    override fun onAnimationRepeat(animation: Animator) {}
-                }).start()
+            if (i == dataSet[position].count.get()) {
+                image.animate()
+                    .setDuration(300)
+                    .alpha(1f)
+                    .setListener(object : Animator.AnimatorListener {
+                        override fun onAnimationStart(animation: Animator) {}
+                        override fun onAnimationEnd(animation: Animator) {}
+                        override fun onAnimationCancel(animation: Animator) {}
+                        override fun onAnimationRepeat(animation: Animator) {}
+                    }).start()
+            }
         }
     }
 
