@@ -9,15 +9,33 @@
     android:id="@+id/layout"
     tools:context=".MainActivity">
 
-    <com.google.android.material.button.MaterialButton
+    <ImageButton
         android:id="@+id/button"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:gravity="center"
-        app:backgroundTint="@android:color/transparent"
-        app:icon="@drawable/baseline_menu_24"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/image_background"
+        android:src="@drawable/upgrade"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <app.rive.runtime.kotlin.RiveAnimationView
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="gone"
+        android:id="@+id/rav2"
+        android:elevation="5dp"
+        android:layout_marginEnd="35dp"
+        app:riveAutoPlay="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:riveStateMachine="State Machine 1"
+        app:riveResource="@raw/alert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/label"
@@ -27,7 +45,7 @@
         android:gravity="center"
         android:text="Metal: 0"
         android:textColor="@color/white"
-        android:textSize="48sp"
+        android:textSize="40sp"
         app:fontFamily="@font/aldrich"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,12 +80,13 @@
         android:id="@+id/touchRav"
         android:layout_width="180dp"
         android:layout_height="180dp"
-        android:layout_marginTop="170dp"
+        android:layout_marginTop="125pt"
         android:background="@drawable/round_button"
         android:gravity="center_vertical|center_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <app.rive.runtime.kotlin.RiveAnimationView

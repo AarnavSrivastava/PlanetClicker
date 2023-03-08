@@ -2,15 +2,19 @@ package com.example.planetclicker
 
 import android.animation.Animator
 import android.annotation.SuppressLint
-import android.graphics.Path
+import android.opengl.Visibility
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.*
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -26,12 +30,11 @@ import app.rive.runtime.kotlin.RiveAnimationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.lang.Thread.sleep
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.floor
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 
@@ -46,8 +49,9 @@ class MainActivity : AppCompatActivity() {
     var multiplier: AtomicReference<Double> = AtomicReference<Double>(1.0)
 
     lateinit var mainActivity: ConstraintLayout
-    lateinit var button: MaterialButton
+    lateinit var button: ImageButton
     lateinit var rav: RiveAnimationView
+    lateinit var alert: RiveAnimationView
     lateinit var touchRav: Button
 
     var items: ArrayList<UpgradeItem> = arrayListOf(UpgradeItem("Manual Labor", R.drawable.miner, AtomicInteger(30), AtomicInteger(5)))
@@ -63,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         mainActivity = findViewById(R.id.layout)
         touchRav = findViewById(R.id.touchRav)
         rav = findViewById(R.id.rav)
+        alert = findViewById(R.id.rav2)
         mpsView = findViewById(R.id.perSec)
 
         touchRav.apply {
@@ -75,10 +80,10 @@ class MainActivity : AppCompatActivity() {
                         MotionEvent.ACTION_DOWN -> {
                             rav.setBooleanState("State Machine 1", "Pressed", true)
 
-                            metal.set(metal.get()+currentPerClick.get() * multiplier.get())
+                            metal.set(((metal.get()+currentPerClick.get() * multiplier.get())*1000.0).roundToInt()/1000.0)
 
-                            val x = event.x.toInt()
-                            val y = event.y.toInt()
+                            val x = event.rawX.toInt()
+                            val y = event.rawY.toInt()
 
                             val lp = LayoutParams(100,100)
                             val lp2 = LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT)
@@ -103,11 +108,11 @@ class MainActivity : AppCompatActivity() {
                             mainActivity.addView(incrementText)
 
                             set.clone(mainActivity)
-                            set.connect(metalImage.id, ConstraintSet.TOP, mainActivity.id, ConstraintSet.TOP, y+700)
-                            set.connect(metalImage.id, ConstraintSet.LEFT, mainActivity.id, ConstraintSet.LEFT, x+250)
+                            set.connect(metalImage.id, ConstraintSet.TOP, mainActivity.id, ConstraintSet.TOP, y-300)
+                            set.connect(metalImage.id, ConstraintSet.LEFT, mainActivity.id, ConstraintSet.LEFT, x-30)
 
-                            set.connect(incrementText.id, ConstraintSet.TOP, mainActivity.id, ConstraintSet.TOP, y+720)
-                            set.connect(incrementText.id, ConstraintSet.LEFT, mainActivity.id, ConstraintSet.LEFT, x+260+Random.nextInt(-30,30))
+                            set.connect(incrementText.id, ConstraintSet.TOP, mainActivity.id, ConstraintSet.TOP, y-300)
+                            set.connect(incrementText.id, ConstraintSet.LEFT, mainActivity.id, ConstraintSet.LEFT, x+Random.nextInt(-30,30)-15)
                             set.applyTo(mainActivity);
 
                             metalImage.animate()
@@ -139,10 +144,27 @@ class MainActivity : AppCompatActivity() {
                                     override fun onAnimationRepeat(animation: Animator) {}
                                 }).start()
 
-//                                Log.d("EXCEPTION", e.toString())
-
 
                             disp.text = "Metal: ${floor(metal.get()).toInt()}"
+
+                            for (item in items) {
+                                if (item.cost.get() <= metal.get() && alert.visibility == GONE) {
+                                    runOnUiThread {
+                                        alert.visibility = VISIBLE
+                                        alert.setBooleanState("State Machine 1", "Playing", true)
+                                        item.enabled.set(true)
+                                        upgradeItemAdapter.notifyDataSetChanged()
+                                    }
+                                }
+                                else if (item.cost.get() > metal.get() && alert.visibility != GONE) {
+                                    runOnUiThread {
+                                        alert.visibility = GONE
+                                        alert.setBooleanState("State Machine 1", "Playing", false)
+                                        item.enabled.set(false)
+                                        upgradeItemAdapter.notifyDataSetChanged()
+                                    }
+                                }
+                            }
 
                             true
                         }
@@ -156,20 +178,37 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-        GlobalScope.launch {
+        val passiveThread = Thread {
             while (true) {
                 sleep(100)
 
-                Log.d("COUNT", "${metal.get()}")
-
                 for (item in items) {
                     if (item.count.get() != 0) {
-                        metal.set(metal.get() + item.income.get() * multiplier.get()/(item.cooldown.get()*10))
+                        metal.set(((metal.get() + item.income.get() * multiplier.get() /(10 * item.cooldown.get()))*1000.0).roundToInt()/1000.0)
                         disp.text = "Metal: ${floor(metal.get()).toInt()}"
+                    }
+
+                    if (item.cost.get() <= metal.get() && alert.visibility == GONE) {
+                        runOnUiThread {
+                            alert.visibility = VISIBLE
+                            alert.setBooleanState("State Machine 1", "Playing", true)
+                            item.enabled.set(true)
+                            upgradeItemAdapter.notifyDataSetChanged()
+                        }
+                    }
+                    else if (item.cost.get() > metal.get() && alert.visibility != GONE) {
+                        runOnUiThread {
+                            alert.visibility = GONE
+                            alert.setBooleanState("State Machine 1", "Playing", false)
+                            item.enabled.set(false)
+                            upgradeItemAdapter.notifyDataSetChanged()
+                        }
                     }
                 }
             }
         }
+
+        passiveThread.start()
 
 
         button.setOnClickListener {

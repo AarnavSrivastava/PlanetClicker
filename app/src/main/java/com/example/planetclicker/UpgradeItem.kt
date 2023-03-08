@@ -1,5 +1,6 @@
 package com.example.planetclicker
 
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.floor
 import kotlin.math.pow
@@ -11,6 +12,8 @@ class UpgradeItem(name: String, image: Int, cost: AtomicInteger, cooldown: Atomi
 
     var cost: AtomicInteger = cost
     private var startCost: Int = cost.get()
+
+    var enabled: AtomicBoolean = AtomicBoolean(false)
 
     val cooldown: AtomicInteger = cooldown
 

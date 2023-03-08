@@ -92,6 +92,8 @@ class UpgradeItemAdapter(private val dataSet: ArrayList<UpgradeItem>, mContext: 
                 this.notifyDataSetChanged()
             }
         }
+
+        viewHolder.button.isEnabled = dataSet[position].enabled.get()
     }
 
     // Return the size of your dataset (invoked by the layout manager)
