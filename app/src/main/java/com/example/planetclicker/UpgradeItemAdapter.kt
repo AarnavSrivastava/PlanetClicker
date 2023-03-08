@@ -109,13 +109,12 @@ class UpgradeItemAdapter(private val dataSet: ArrayList<UpgradeItem>, mContext: 
             animate(viewHolder.button)
         }
 
-        for (i in 0..dataSet[position].count.get()) {
+        for (i in 1..dataSet[position].count.get()) {
             var image = ImageView(MainActivity.context)
             image.id = ConstraintLayout.generateViewId()
             image.setImageResource(dataSet[position].image)
-            image.alpha = 0f
 
-            val lp = ConstraintLayout.LayoutParams(200, 200)
+            val lp = ConstraintLayout.LayoutParams(50, 100)
             image.layoutParams = lp
 
             viewHolder.constLayout.addView(image)
@@ -124,9 +123,12 @@ class UpgradeItemAdapter(private val dataSet: ArrayList<UpgradeItem>, mContext: 
             set.clone(viewHolder.constLayout)
 
             set.connect(image.id, ConstraintSet.TOP, viewHolder.constLayout.id, ConstraintSet.TOP, 30)
-            set.connect(image.id, ConstraintSet.LEFT, viewHolder.constLayout.id, ConstraintSet.LEFT, 500 + 500 * i)
+            set.connect(image.id, ConstraintSet.LEFT, viewHolder.constLayout.id, ConstraintSet.LEFT, 20 * i)
+
+            set.applyTo(viewHolder.constLayout)
 
             if (i == dataSet[position].count.get()) {
+                image.alpha = 0f
                 image.animate()
                     .setDuration(300)
                     .alpha(1f)
