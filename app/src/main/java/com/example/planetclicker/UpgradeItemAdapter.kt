@@ -108,36 +108,60 @@ class UpgradeItemAdapter(private val dataSet: ArrayList<UpgradeItem>, mContext: 
         if (viewHolder.button.isEnabled) {
             animate(viewHolder.button)
         }
+        else {
+            viewHolder.button.animate()
+                .setDuration(400)
+                .scaleX(0.75f)
+                .scaleY(0.75f)
+                .setInterpolator(BounceInterpolator())
+                .setListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator) {}
+                    override fun onAnimationEnd(animation: Animator) {}
+                    override fun onAnimationCancel(animation: Animator) {}
+                    override fun onAnimationRepeat(animation: Animator) {}
+                }).start()
+        }
 
         for (i in 1..dataSet[position].count.get()) {
-            var image = ImageView(MainActivity.context)
-            image.id = ConstraintLayout.generateViewId()
-            image.setImageResource(dataSet[position].image)
+            if (i <= 40) {
+                var image = ImageView(MainActivity.context)
+                image.id = ConstraintLayout.generateViewId()
+                image.setImageResource(dataSet[position].image)
 
-            val lp = ConstraintLayout.LayoutParams(50, 100)
-            image.layoutParams = lp
+                val lp = ConstraintLayout.LayoutParams(75, 100)
+                image.layoutParams = lp
 
-            viewHolder.constLayout.addView(image)
+                viewHolder.constLayout.addView(image)
 
-            val set = ConstraintSet()
-            set.clone(viewHolder.constLayout)
+                val set = ConstraintSet()
+                set.clone(viewHolder.constLayout)
 
-            set.connect(image.id, ConstraintSet.TOP, viewHolder.constLayout.id, ConstraintSet.TOP, 30)
-            set.connect(image.id, ConstraintSet.LEFT, viewHolder.constLayout.id, ConstraintSet.LEFT, 20 * i)
+                var y = 30
 
-            set.applyTo(viewHolder.constLayout)
+                if (i / 19 == 1) {
+                    y = 60
+                }
+                else if (i / 38 == 1) {
+                    y = 90
+                }
 
-            if (i == dataSet[position].count.get()) {
-                image.alpha = 0f
-                image.animate()
-                    .setDuration(300)
-                    .alpha(1f)
-                    .setListener(object : Animator.AnimatorListener {
-                        override fun onAnimationStart(animation: Animator) {}
-                        override fun onAnimationEnd(animation: Animator) {}
-                        override fun onAnimationCancel(animation: Animator) {}
-                        override fun onAnimationRepeat(animation: Animator) {}
-                    }).start()
+                set.connect(image.id, ConstraintSet.TOP, viewHolder.constLayout.id, ConstraintSet.TOP, y + Random.nextInt(-10,10))
+                set.connect(image.id, ConstraintSet.LEFT, viewHolder.constLayout.id, ConstraintSet.LEFT, 20 * i + 30 * (i-1) + Random.nextInt(-5,10))
+
+                set.applyTo(viewHolder.constLayout)
+
+                if (i == dataSet[position].count.get()) {
+                    image.alpha = 0f
+                    image.animate()
+                        .setDuration(300)
+                        .alpha(1f)
+                        .setListener(object : Animator.AnimatorListener {
+                            override fun onAnimationStart(animation: Animator) {}
+                            override fun onAnimationEnd(animation: Animator) {}
+                            override fun onAnimationCancel(animation: Animator) {}
+                            override fun onAnimationRepeat(animation: Animator) {}
+                        }).start()
+                }
             }
         }
     }

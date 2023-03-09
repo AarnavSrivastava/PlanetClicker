@@ -5,10 +5,12 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.floor
 import kotlin.math.pow
 
-class UpgradeItem(name: String, image: Int, cost: AtomicInteger, cooldown: AtomicInteger) {
+class UpgradeItem(name: String, image: Int, cost: AtomicInteger, cooldown: AtomicInteger, startIncome: AtomicInteger) {
     val image: Int = image
     val name: String = name
-    val income: AtomicInteger = AtomicInteger(0)
+
+    var income: AtomicInteger = AtomicInteger(0)
+    val startIncome: AtomicInteger = startIncome
 
     var cost: AtomicInteger = cost
     private var startCost: Int = cost.get()
@@ -22,6 +24,6 @@ class UpgradeItem(name: String, image: Int, cost: AtomicInteger, cooldown: Atomi
     fun buyItem() {
         count.incrementAndGet()
         this.cost.set(floor(startCost * 1.15.pow(count.toDouble()) + 0.5).toInt())
-        income.set(floor(count.get() * 1.5 - 0.5).toInt())
+        income.set(floor(startIncome.get() * count.get() * 1.5 - 0.5).toInt())
     }
 }

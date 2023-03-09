@@ -38,6 +38,13 @@ import kotlin.math.floor
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
+/*
+* Just a few notes:
+*  1. I used Kotlin (sorry Java)
+*  2. For my animated "cookie" (planet) and alert icon for when you have enough metal to purchase an upgrade, I chose to use the Rive animation library (rive.app)
+*  3. My upgrades are located within a RecyclerView within a BottomSheet
+* */
+
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -56,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var alert: RiveAnimationView
     lateinit var touchRav: Button
 
-    var items: ArrayList<UpgradeItem> = arrayListOf(UpgradeItem("Manual Labor", R.drawable.miner, AtomicInteger(30), AtomicInteger(5)))
+    var items: ArrayList<UpgradeItem> = arrayListOf(UpgradeItem("Manual Labor", R.drawable.miner, AtomicInteger(30), AtomicInteger(5), AtomicInteger(1)), UpgradeItem("Mini Laser", R.drawable.satellite, AtomicInteger(100), AtomicInteger(10), AtomicInteger(25)))
     var upgradeItemAdapter = UpgradeItemAdapter(items, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -151,19 +158,36 @@ class MainActivity : AppCompatActivity() {
 
                             disp.text = "Metal: ${floor(metal.get()).toInt()}"
 
+                            var count = 0
+
                             for (item in items) {
-                                if (item.cost.get() <= metal.get() && alert.visibility == GONE) {
+                                if (item.cost.get() <= metal.get() && item.enabled.get()) {
+                                    count++
+                                }
+
+                                if (item.cost.get() <= metal.get() && !item.enabled.get()) {
                                     runOnUiThread {
-                                        alert.visibility = VISIBLE
-                                        alert.setBooleanState("State Machine 1", "Playing", true)
                                         item.enabled.set(true)
                                         upgradeItemAdapter.notifyDataSetChanged()
                                     }
                                 }
-                                else if (item.cost.get() > metal.get() && alert.visibility != GONE) {
+
+                                if (item.cost.get() <= metal.get() && alert.visibility == GONE) {
+                                    count++
+                                    runOnUiThread {
+                                        alert.visibility = VISIBLE
+                                        alert.setBooleanState("State Machine 1", "Playing", true)
+                                    }
+                                }
+                                else if (alert.visibility != GONE && count == 0) {
                                     runOnUiThread {
                                         alert.visibility = GONE
                                         alert.setBooleanState("State Machine 1", "Playing", false)
+                                    }
+                                }
+
+                                if (item.cost.get() > metal.get() && item.enabled.get()) {
+                                    runOnUiThread {
                                         item.enabled.set(false)
                                         upgradeItemAdapter.notifyDataSetChanged()
                                     }
@@ -185,6 +209,7 @@ class MainActivity : AppCompatActivity() {
         val passiveThread = Thread {
             while (true) {
                 sleep(100)
+                var count = 0
 
                 for (item in items) {
                     if (item.count.get() != 0) {
@@ -192,18 +217,33 @@ class MainActivity : AppCompatActivity() {
                         disp.text = "Metal: ${floor(metal.get()).toInt()}"
                     }
 
-                    if (item.cost.get() <= metal.get() && alert.visibility == GONE) {
+                    if (item.cost.get() <= metal.get() && item.enabled.get()) {
+                        count++
+                    }
+
+                    if (item.cost.get() <= metal.get() && !item.enabled.get()) {
                         runOnUiThread {
-                            alert.visibility = VISIBLE
-                            alert.setBooleanState("State Machine 1", "Playing", true)
                             item.enabled.set(true)
                             upgradeItemAdapter.notifyDataSetChanged()
                         }
                     }
-                    else if (item.cost.get() > metal.get() && alert.visibility != GONE) {
+
+                    if (item.cost.get() <= metal.get() && alert.visibility == GONE) {
+                        count++
+                        runOnUiThread {
+                            alert.visibility = VISIBLE
+                            alert.setBooleanState("State Machine 1", "Playing", true)
+                        }
+                    }
+                    else if (alert.visibility != GONE && count == 0) {
                         runOnUiThread {
                             alert.visibility = GONE
                             alert.setBooleanState("State Machine 1", "Playing", false)
+                        }
+                    }
+
+                    if (item.cost.get() > metal.get() && item.enabled.get()) {
+                        runOnUiThread {
                             item.enabled.set(false)
                             upgradeItemAdapter.notifyDataSetChanged()
                         }
